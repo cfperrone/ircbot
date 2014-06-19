@@ -2,7 +2,22 @@
 var request = require('request'),
     parser = require('xml2js'),
     entities = require('entities'),
-    webUrl = "http://web.mta.info/status/serviceStatus.txt";
+    webUrl = "http://web.mta.info/status/serviceStatus.txt",
+    irc = require('irc'); // used only for irc.colors
+
+var line_colors = {
+    '123':  'light_red',
+    '456':  'dark_green',
+    '7':    'magenta',
+    'ACE':  'dark_blue',
+    'BDFM': 'orange',
+    'G':    'light_green',
+    'JZ':   'dark_red',
+    'NQR':  'yellow',
+    'L':    'gray',
+    'S':    'gray',
+    'SIR':  'dark_blue',
+}
 
 module.exports = {
     name: "MTA Status",
@@ -47,7 +62,12 @@ function getMTAStatus(client, args) {
                 }
 
                 var theLine = all_status[line_key],
+                    color = getColorForLine(line_key),
                     outstr = line_key + ": " + theLine.status + "\n" + theLine.text;
+
+                if (color) {
+                    outstr = irc.colors.wrap(color, line_key) + ": " + theLine.status + "\n" + theLine.text;
+                }
 
                 client.say(args.replyto, outstr);
             });
@@ -95,6 +115,13 @@ function getLineKey(input) {
         default:
             return null;
     }
+}
+
+function getColorForLine(line) {
+    if (typeof line_colors[line] != 'undefined') {
+        return line_colors[line];
+    }
+    return null;
 }
 
 function sanitize(text) {
