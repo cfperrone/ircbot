@@ -1,6 +1,5 @@
 // automation.js
-var http = require('http'),
-    request = require('request'),
+var request = require('request'),
     automation_url = "http://wrct.org/automation-log/display.php";
 
 module.exports = {
