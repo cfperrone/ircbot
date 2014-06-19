@@ -116,10 +116,7 @@ function loadModules() {
         console.log("Loaded " + script_count + " modules and " + command_count + " commands");
     });
 }
-
-// Instantiate event to disconnect server on process exit
-process.on('SIGINT', cleanup);
-process.on('SIGHUP', function() {
+this.reloadModules = function() {
     // Reload the modules while the server is running
     console.log("Reloading the modules...");
 
@@ -130,7 +127,11 @@ process.on('SIGHUP', function() {
     }
 
     loadModules();
-});
+}
+
+// Instantiate event to disconnect server on process exit
+process.on('SIGINT', cleanup);
+process.on('SIGHUP', this.reloadModules);
 process.on('SIGUSR2', cleanup);
 
 function cleanup() {
