@@ -6,7 +6,7 @@ var dbfile = __dirname + "/../data/learn.db";
 
 // If the database doesn't exist, create it
 fs.exists(dbfile, function(exists) {
-    db = new sqlite3.Database(dbfile);
+    learn_db = new sqlite3.Database(dbfile);
 
     if (!exists) {
         createDb();
@@ -27,13 +27,13 @@ module.exports = {
     },
     cleanup: function() {
         console.log("Cleanedup!");
-        db.close();
+        learn_db.close();
     }
 };
 
 // Creates a database for learn
 function createDb() {
-    db.run("CREATE TABLE learn (`key` text, value text)", function(err) {
+    learn_db.run("CREATE TABLE learn (`key` text, value text)", function(err) {
         if (err) {
             console.log(err);
         }
@@ -52,7 +52,7 @@ function doLearn(client, args) {
     var keyword = cmd_args[1],
         value = cmd_args[2];
 
-    db.run("INSERT INTO learn VALUES (?, ?)", keyword, value, function(err) {
+    learn_db.run("INSERT INTO learn VALUES (?, ?)", keyword, value, function(err) {
         if (err == null) {
             client.say(args.replyto, "OK. I learned " + keyword);
         }
@@ -72,13 +72,13 @@ function doUnlearn(client, args) {
     var keyword = cmd_args[1];
     if (cmd_args.length == 3) {
         var value = cmd_args[2];
-        db.run("DELETE FROM learn WHERE `key`=? AND value=?", keyword, value, function(err) {
+        learn_db.run("DELETE FROM learn WHERE `key`=? AND value=?", keyword, value, function(err) {
             if (err == null) {
                 client.say(args.replyto, "OK. I forgot " + keyword);
             }
         });
     } else {
-        db.run("DELETE FROM learn WHERE `key`=?", keyword, function(err) {
+        learn_db.run("DELETE FROM learn WHERE `key`=?", keyword, function(err) {
             if (err == null) {
                 client.say(args.replyto, "OK. I forgot " + keyword);
             }
@@ -98,12 +98,12 @@ function doList(client, args) {
     var keyword = cmd_args[1];
     client.say(args.replyto, "OK: I'm going to PM you a list of results");
     var index = 0;
-    db.each("SELECT value FROM learn WHERE `key`=?", keyword, function(err, row) {
+    learn_db.each("SELECT value FROM learn WHERE `key`=?", keyword, function(err, row) {
         if (err) {
             return;
         }
 
-        client.say(args.from, index + ": " + row.value);
+        client.say(args.from, row.value);
         index++;
     }, function(err) {
     });
@@ -115,9 +115,9 @@ function doLookup(client, args) {
     var cmd_args = args.args,
         cmd = cmd_args[0];
 
-    db.all("SELECT value FROM learn WHERE `key`=?", cmd, function(err, rows) {
+    learn_db.all("SELECT value FROM learn WHERE `key`=?", cmd, function(err, rows) {
         if (err) {
-            console.log("Database error :(");
+            console.log(err);
             return;
         }
 
