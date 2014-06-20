@@ -8,7 +8,7 @@ module.exports = {
     commands: {
         join: doJoin,
         part: doPart,
-        reload: doReload,
+        reload_modules: doReload,
         help: doHelp,
     }
 };
