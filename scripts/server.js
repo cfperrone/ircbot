@@ -1,5 +1,6 @@
 // server.js
 // For controlling the ircbot
+var irc = require('irc');
 
 module.exports = {
     name: "Server Controls",
@@ -8,9 +9,11 @@ module.exports = {
         join: doJoin,
         part: doPart,
         reload: doReload,
+        help: doHelp,
     }
 };
 
+// Makes the bot join a channel
 function doJoin(client, args) {
     var cmd_args = args.args;
 
@@ -24,6 +27,7 @@ function doJoin(client, args) {
     client.say(args.replyto, "OK. I joined " + channel);
 }
 
+// Makes the bot leave a channel
 function doPart(client, args) {
     var cmd_args = args.args,
         channel = args.to;
@@ -38,10 +42,24 @@ function doPart(client, args) {
     client.part(channel);
 }
 
+// Performs a reload of the modules
 function doReload(client, args) {
     var parent = module.parent,
         obj = require(parent.filename);
 
     obj.reloadModules();
-    client.say(args.replyto, "OK. Modules are reloaded!");
+    client.say(args.replyto, "OK. Modules are reloaded.");
+}
+
+// PM the user a list of all the commands available
+function doHelp(client, args) {
+    client.say(args.replyto, "OK. I'm going to PM you everything I know");
+
+    for (var key in scripts) {
+        var script = scripts[key],
+            name = script.name,
+            desc = script.description,
+            cmds = Object.keys(script.commands).join(", ");
+        client.say(args.from, irc.colors.wrap('dark_green', name) + " (" + desc + ") | " + irc.colors.wrap('dark_red', 'Cmds') + ": " + cmds);
+    }
 }
