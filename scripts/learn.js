@@ -103,7 +103,7 @@ function doList(client, args) {
             return;
         }
 
-        client.say(args.from, row.value);
+        client.say(args.from, index + ": " + row.value);
         index++;
     }, function(err) {
     });
