@@ -24,8 +24,8 @@ var server = process.argv[2],
     };
 
 // Other globals
-var scripts = [];
-var commands = [];
+this.scripts = [];
+this.commands = [];
 
 // Load scripts and instantiate commands
 loadModules();
@@ -58,9 +58,9 @@ function handleRequest(from, to, message, replyto) {
         funcName = first_arg;
 
     // If the command doesn't exist fallback to a defined one
-    if (!(first_arg in commands)) {
+    if (!(first_arg in this.commands)) {
         if (typeof defaultCommand != 'undefined' &&
-            defaultCommand in commands) {
+            defaultCommand in this.commands) {
             funcName = defaultCommand;
         } else {
             return;
@@ -68,7 +68,7 @@ function handleRequest(from, to, message, replyto) {
     }
 
     // Setup args to be sent to the script's command
-    var func = commands[funcName],
+    var func = this.commands[funcName],
         args = {
             from: from,
             to: to,
@@ -81,8 +81,8 @@ function handleRequest(from, to, message, replyto) {
 }
 
 function loadModules() {
-    scripts = [];
-    commands = [];
+    this.scripts = [];
+    this.commands = [];
 
     fs.readdir(scriptDir, function(err, files) {
         if (err) {
@@ -103,11 +103,11 @@ function loadModules() {
             }
 
             var module = require(abspath);
-            scripts[filename] = module;
+            this.scripts[filename] = module;
             script_count++;
 
             for (var k in module.commands) {
-                commands[k] = module.commands[k];
+                this.commands[k] = module.commands[k];
                 command_count++;
             }
 
@@ -141,8 +141,8 @@ function cleanup() {
         });
     }
 
-    for (var i in scripts) {
-        var script = scripts[i];
+    for (var i in this.scripts) {
+        var script = this.scripts[i];
 
         if (typeof script.cleanup != 'undefined') {
             script.cleanup();
