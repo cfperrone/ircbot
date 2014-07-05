@@ -21,9 +21,6 @@ module.exports = {
         unlearn: doUnlearn,
         list: doList,
         dolookup: doLookup,
-        learntesting: function(client, args) {
-            client.say(args.replyto, "lolwat");
-        }
     },
     cleanup: function() {
         console.log("Cleanedup!");

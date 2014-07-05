@@ -53,7 +53,7 @@ function doReload(client, args) {
 
 // PM the user a list of all the commands available
 function doHelp(client, args) {
-    client.say(args.replyto, "OK. I'm going to PM you everything I know");
+    client.say(args.replyto, "OK. I'm going to PM you information about all the modules I know");
 
     for (var key in scripts) {
         var script = scripts[key],
