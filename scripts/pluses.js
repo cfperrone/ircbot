@@ -19,6 +19,8 @@ module.exports = {
         '++': doP,
         '--': doP,
         pluses: doP,
+        donate: doT,
+        transfer: doT,
     }
 };
 
@@ -50,8 +52,27 @@ function doP(client, args) {
     }
 }
 
+function doT(client, args) {
+    var cmd_args = args.args,
+        cmd = cmd_args[0],
+        nick = null;
+
+    if (cmd_args.length == 2) {
+        nick = cmd_args[1];
+    }
+
+    if (!nick || nick == args.from) {
+        client.say(args.replyto, "You'll go blind like that");
+        return;
+    }
+
+    donatePlusForNicks(client, args, args.from, nick);
+}
+
 // Performs the ++ command
-function doPlus(client, args, nick, pluses) {
+function doPlus(client, args, nick, pluses, announce) {
+    if (typeof(announce) == 'undefined') announce = true;
+
     if (pluses == null) {
         pluses = 1;
         pluses_db.run("INSERT INTO pluses VALUES (?, ?)", nick, pluses, function(err) {
@@ -69,10 +90,16 @@ function doPlus(client, args, nick, pluses) {
         });
     }
 
-    client.say(args.replyto, nick + " now has " + pluses + " plus" + ((Math.abs(pluses) == 1)?"":"es") + "!");
+    if (announce) {
+        client.say(args.replyto, nick + " now has " + pluses + " plus" + ((Math.abs(pluses) == 1)?"":"es") + "!");
+    }
+
+    return pluses;
 }
 
-function doMinus(client, args, nick, pluses) {
+function doMinus(client, args, nick, pluses, announce) {
+    if (typeof announce === 'undefined') announce = true;
+
     if (pluses == null) {
         pluses = -1;
         pluses_db.run("INSERT INTO pluses VALUES (?, ?)", nick, pluses, function(err) {
@@ -89,7 +116,11 @@ function doMinus(client, args, nick, pluses) {
         });
     }
 
-    client.say(args.replyto, nick + " now has " + pluses + " plus" + ((Math.abs(pluses) == 1)?"":"es") + "!");
+    if (announce) {
+        client.say(args.replyto, nick + " now has " + pluses + " plus" + ((Math.abs(pluses) == 1)?"":"es") + "!");
+    }
+
+    return pluses;
 }
 
 // Performs the pluses command, shows number of pluses for nick
@@ -115,6 +146,19 @@ function getPlusesForNick(client, args, nick, then) {
         }
 
         then(client, args, nick, pluses);
+    });
+}
+
+function donatePlusForNicks(client, args, from, to) {
+    getPlusesForNick(client, args, from, function(client, args, nick, pluses) {
+        // Subtract a plus from 'from'
+        var new_from = doMinus(client, args, from, pluses, false);
+        // Get the pluses for the 'to' user
+        getPlusesForNick(client, args, to, function(client, args, nick, pluses) {
+            // Add a plus to 'to'
+            var new_to = doPlus(client, args, to, pluses, false);
+            client.say(args.replyto, from + " transferred a plus to " + to + "! " + from  + " has " + new_from + ", " + to + " has " + new_to);
+        });
     });
 }
 
