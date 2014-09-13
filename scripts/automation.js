@@ -1,6 +1,6 @@
 // automation.js
 var request = require('request'),
-    automation_url = "http://wrct.org/automation-log/display.php";
+    automation_url = "http://wrct.org/automation-log/display.php?plain=1";
 
 module.exports = {
     name: "Automation",
