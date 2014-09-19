@@ -1,2 +1,3 @@
 data/*
 !data/*.md
+includes/*_secrets.js
