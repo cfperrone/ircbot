@@ -7,9 +7,12 @@ module.exports.config = {
     userName: 'hal',
     realName: 'An IRC Bot',
     port: 6667,
+
+    /* For SSL connections
     secure: true,
-    selfSigned: true,
-    certExpired: true,
+    selfSigned: false,
+    certExpired: false,
+    */
     channels: [
     ],
 }
