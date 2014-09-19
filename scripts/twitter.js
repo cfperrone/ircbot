@@ -71,7 +71,14 @@ function getRecentPost(client, args, access_token) {
             return;
         }
 
-        var obj = JSON.parse(body)[offset],
+        var obj = JSON.parse(body);
+        if (typeof obj.error != 'undefined') {
+            console.log('Twitter Error: ' + obj.error);
+            client.say(args.replyto, 'Error: ' + obj.error);
+            return;
+        }
+
+        var obj = obj[offset],
             post_text = obj.text,
             screen_name = obj.user.screen_name;
             post_id = obj.id_str,
