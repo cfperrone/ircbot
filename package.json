@@ -9,7 +9,8 @@
     "querystring": "0.2.0",
     "moment": "2.8.3",
     "xml2js": "0.4.4",
-    "sqlite3": "2.2.7"
+    "sqlite3": "2.2.7",
+    "entities": "1.1.1"
   },
   "repository": {
     "type": "git",
