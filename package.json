@@ -1,0 +1,24 @@
+{
+  "name": "ircbot",
+  "version": "1.0.2",
+  "description": "A modular IRC bot",
+  "main": "ircbot.js",
+  "dependencies": {
+    "irc": "0.3.5",
+    "request": "2.36.0",
+    "querystring": "0.2.0",
+    "moment": "2.8.3",
+    "xml2js": "0.4.4",
+    "sqlite3": "2.2.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cfperrone/ircbot.git"
+  },
+  "author": "Chris Perrone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cfperrone/ircbot/issues"
+  },
+  "homepage": "https://github.com/cfperrone/ircbot"
+}
